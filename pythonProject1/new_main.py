@@ -26,6 +26,11 @@ def list_test_files():
         for file in sorted(os.listdir('graphs')):
             if file.endswith('.txt') or file.endswith('.tg'):
                 test_files.append(os.path.join('graphs', file))
+
+    if os.path.exists('grafy'):
+        for file in sorted(os.listdir('graphs')):
+            if file.endswith('.txt') or file.endswith('.tg'):
+                test_files.append(os.path.join('graphs', file))
     
     return test_files
 

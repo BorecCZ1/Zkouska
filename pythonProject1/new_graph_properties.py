@@ -565,15 +565,35 @@ def get_degree(graph: Graph, node: str) -> int:
     return degree
 
 
+def is_directed(graph: Graph) -> bool:
+    """Zkontroluje, zda je graf orientovaný"""
+    for edge in graph.edges:
+        if edge.directed:
+            return True
+    return False
+
+
 def check_regular(graph: Graph) -> Optional[int]:
     """Zkontroluje, zda je graf regulární"""
     if not graph.nodes:
         return None
     
-    degrees = [get_degree(graph, node) for node in graph.nodes]
-    if all(d == degrees[0] for d in degrees):
-        return degrees[0]
-    return None
+    # Pro orientované grafy: zkontrolovat vstupní a výstupní stupně
+    if is_directed(graph):
+        in_degrees = [get_in_degree(graph, node) for node in graph.nodes]
+        out_degrees = [get_out_degree(graph, node) for node in graph.nodes]
+        
+        # Všechny uzly musí mít stejný vstupní i výstupní stupeň
+        if (all(d == in_degrees[0] for d in in_degrees) and 
+            all(d == out_degrees[0] for d in out_degrees)):
+            return in_degrees[0]  # Vrátí stupeň
+        return None
+    else:
+        # Pro neorientované grafy: celkový stupeň
+        degrees = [get_degree(graph, node) for node in graph.nodes]
+        if all(d == degrees[0] for d in degrees):
+            return degrees[0]
+        return None
 
 
 def check_bipartite(graph: Graph) -> Tuple[bool, Optional[Tuple[Set[str], Set[str]]]]:
