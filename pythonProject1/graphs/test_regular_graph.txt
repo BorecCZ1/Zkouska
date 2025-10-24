@@ -1,0 +1,12 @@
+# Regulární graf (kruh C5 - všechny uzly mají stupeň 2)
+u A;
+u B;
+u C;
+u D;
+u E;
+h A - B;
+h B - C;
+h C - D;
+h D - E;
+h E - A;
+

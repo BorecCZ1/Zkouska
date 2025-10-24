@@ -1,0 +1,83 @@
+# Graf 17: Smíšený graf - kombinace orientovaných a neorientovaných hran
+# Simuluje komunikační síť s různými typy spojení
+u Router_Main 3000;
+u Switch_A 1000;
+u Switch_B 1100;
+u Switch_C 1200;
+u Switch_D 1300;
+u Switch_E 1400;
+u Server_DB1 800;
+u Server_DB2 850;
+u Server_Web1 700;
+u Server_Web2 750;
+u Server_App1 650;
+u Server_App2 700;
+u Firewall_External 2000;
+u Firewall_Internal 1800;
+u LoadBalancer_1 1500;
+u LoadBalancer_2 1600;
+u Storage_NAS1 900;
+u Storage_NAS2 950;
+u Backup_System 1000;
+u Monitoring 600;
+# Neorientované spojení mezi switchi (symetrické)
+h Switch_A - Switch_B 100 :sw_ab;
+h Switch_B - Switch_C 100 :sw_bc;
+h Switch_C - Switch_D 100 :sw_cd;
+h Switch_D - Switch_E 100 :sw_de;
+h Switch_E - Switch_A 100 :sw_ea;
+h Switch_A - Switch_C 150 :sw_ac;
+h Switch_B - Switch_D 150 :sw_bd;
+h Switch_C - Switch_E 150 :sw_ce;
+# Orientované spojení od routeru (downstream)
+h Router_Main > Switch_A 50 :rt_swa;
+h Router_Main > Switch_B 50 :rt_swb;
+h Router_Main > Switch_C 50 :rt_swc;
+h Router_Main > Switch_D 50 :rt_swd;
+h Router_Main > Switch_E 50 :rt_swe;
+# Orientované spojení do firewallů
+h Firewall_External > Router_Main 10 :fw_rt;
+h Router_Main > Firewall_Internal 10 :rt_fw;
+# Orientované spojení od switchů k serverům
+h Switch_A > Server_DB1 80 :swa_db1;
+h Switch_A > Server_Web1 70 :swa_web1;
+h Switch_B > Server_DB2 80 :swb_db2;
+h Switch_B > Server_Web2 70 :swb_web2;
+h Switch_C > Server_App1 60 :swc_app1;
+h Switch_D > Server_App2 60 :swd_app2;
+# Neorientované spojení mezi databázemi (replikace)
+h Server_DB1 - Server_DB2 200 :db_repl;
+# Neorientované spojení mezi web servery (session sharing)
+h Server_Web1 - Server_Web2 120 :web_session;
+# Neorientované spojení mezi app servery (cache sharing)
+h Server_App1 - Server_App2 110 :app_cache;
+# Orientované spojení k load balancerům
+h Switch_E > LoadBalancer_1 90 :swe_lb1;
+h Switch_E > LoadBalancer_2 90 :swe_lb2;
+h LoadBalancer_1 > Server_Web1 40 :lb1_web1;
+h LoadBalancer_1 > Server_Web2 40 :lb1_web2;
+h LoadBalancer_2 > Server_App1 40 :lb2_app1;
+h LoadBalancer_2 > Server_App2 40 :lb2_app2;
+# Neorientované spojení k storage
+h Server_DB1 - Storage_NAS1 150 :db1_nas1;
+h Server_DB2 - Storage_NAS1 150 :db2_nas1;
+h Server_DB1 - Storage_NAS2 150 :db1_nas2;
+h Server_DB2 - Storage_NAS2 150 :db2_nas2;
+h Storage_NAS1 - Storage_NAS2 300 :nas_sync;
+# Orientované spojení k záloze
+h Storage_NAS1 > Backup_System 250 :nas1_backup;
+h Storage_NAS2 > Backup_System 250 :nas2_backup;
+# Monitoring - orientované (pouze čte data)
+h Monitoring > Router_Main 5 :mon_rt;
+h Monitoring > Switch_A 5 :mon_swa;
+h Monitoring > Switch_B 5 :mon_swb;
+h Monitoring > Switch_C 5 :mon_swc;
+h Monitoring > Switch_D 5 :mon_swd;
+h Monitoring > Switch_E 5 :mon_swe;
+h Monitoring > Server_DB1 5 :mon_db1;
+h Monitoring > Server_DB2 5 :mon_db2;
+h Monitoring > Server_Web1 5 :mon_web1;
+h Monitoring > Server_Web2 5 :mon_web2;
+h Monitoring > LoadBalancer_1 5 :mon_lb1;
+h Monitoring > LoadBalancer_2 5 :mon_lb2;
+

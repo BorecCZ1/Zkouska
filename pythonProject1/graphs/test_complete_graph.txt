@@ -1,0 +1,12 @@
+# Úplný neorientovaný graf K4
+u A;
+u B;
+u C;
+u D;
+h A - B;
+h A - C;
+h A - D;
+h B - C;
+h B - D;
+h C - D;
+

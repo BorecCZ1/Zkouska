@@ -1,0 +1,66 @@
+# Graf 19: Graf se zápornými váhami - ekonomická síť
+# Simuluje cash flow mezi účty s kladnými i zápornými toky
+u Account_Checking 5000;
+u Account_Savings -2000;
+u Account_Investment 8000;
+u Account_Credit -15000;
+u Account_Loan -25000;
+u Account_Mortgage -150000;
+u Revenue_Sales 50000;
+u Revenue_Services 30000;
+u Revenue_Interest 2000;
+u Expense_Rent -8000;
+u Expense_Salaries -35000;
+u Expense_Utilities -2500;
+u Expense_Marketing -7000;
+u Expense_Supplies -3500;
+u Asset_RealEstate 200000;
+u Asset_Equipment 45000;
+u Asset_Inventory 25000;
+u Liability_PayableTax -12000;
+u Liability_PayableVendor -8500;
+u Equity_Retained 95000;
+# Příjmy (pozitivní cash flow)
+h Revenue_Sales > Account_Checking 5000 :sales_in;
+h Revenue_Services > Account_Checking 3000 :services_in;
+h Revenue_Interest > Account_Savings 200 :interest_in;
+h Account_Investment > Account_Checking 1500 :invest_dividend;
+# Výdaje (negativní cash flow)
+h Account_Checking > Expense_Rent -800 :rent_out;
+h Account_Checking > Expense_Salaries -3500 :salary_out;
+h Account_Checking > Expense_Utilities -250 :utility_out;
+h Account_Checking > Expense_Marketing -700 :marketing_out;
+h Account_Checking > Expense_Supplies -350 :supplies_out;
+# Převody mezi účty
+h Account_Checking > Account_Savings 1000 :save_transfer;
+h Account_Savings > Account_Investment 500 :invest_transfer;
+h Account_Investment > Account_Checking -200 :redeem_investment;
+# Splácení půjček (negativní)
+h Account_Checking > Account_Credit -1000 :credit_payment;
+h Account_Checking > Account_Loan -2000 :loan_payment;
+h Account_Checking > Account_Mortgage -1200 :mortgage_payment;
+# Čerpání úvěrů (zvyšuje záporný zůstatek)
+h Account_Credit > Account_Checking -500 :credit_draw;
+h Account_Loan > Account_Checking -3000 :loan_draw;
+# Daně a závazky
+h Account_Checking > Liability_PayableTax -1200 :tax_payment;
+h Account_Checking > Liability_PayableVendor -850 :vendor_payment;
+h Liability_PayableTax > Account_Checking -300 :tax_refund;
+# Aktiva
+h Asset_RealEstate > Revenue_Sales 4000 :rental_income;
+h Asset_Equipment > Revenue_Services 800 :equipment_revenue;
+h Asset_Inventory > Revenue_Sales 2500 :inventory_sales;
+h Account_Checking > Asset_Equipment -5000 :buy_equipment;
+h Account_Checking > Asset_Inventory -3000 :buy_inventory;
+# Rezervy a kapitál
+h Equity_Retained > Account_Checking 5000 :capital_injection;
+h Account_Checking > Equity_Retained -2000 :profit_retention;
+# Mezinárodní transakce s kurzovými rozdíly
+h Revenue_Sales > Account_Checking 800 :forex_gain;
+h Account_Checking > Expense_Marketing -300 :forex_loss;
+# Smyčky představující úroky
+h Account_Savings > Account_Savings 100 :compound_interest;
+h Account_Credit > Account_Credit -150 :credit_interest;
+h Account_Loan > Account_Loan -500 :loan_interest;
+h Account_Mortgage > Account_Mortgage -1000 :mortgage_interest;
+

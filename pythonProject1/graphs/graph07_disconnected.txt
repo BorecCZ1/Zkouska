@@ -1,0 +1,46 @@
+# Graf 7: Nesouvislý graf s více komponentami
+# Simuluje izolované sociální skupiny
+u Person_A1 25;
+u Person_A2 28;
+u Person_A3 22;
+u Person_A4 30;
+u Person_A5 27;
+u Person_B1 35;
+u Person_B2 32;
+u Person_B3 38;
+u Person_B4 31;
+u Person_C1 45;
+u Person_C2 42;
+u Person_C3 48;
+u Person_D1 55;
+u Person_D2 52;
+u Person_D3 58;
+u Person_D4 51;
+u Person_D5 57;
+u Person_E1 65;
+# Komponenta A - silně propojená skupina
+h Person_A1 - Person_A2 10 :friend_a1a2;
+h Person_A1 - Person_A3 8 :friend_a1a3;
+h Person_A1 - Person_A4 12 :friend_a1a4;
+h Person_A2 - Person_A3 9 :friend_a2a3;
+h Person_A2 - Person_A5 7 :friend_a2a5;
+h Person_A3 - Person_A4 11 :friend_a3a4;
+h Person_A4 - Person_A5 10 :friend_a4a5;
+# Komponenta B - menší skupina
+h Person_B1 - Person_B2 15 :friend_b1b2;
+h Person_B2 - Person_B3 13 :friend_b2b3;
+h Person_B3 - Person_B4 14 :friend_b3b4;
+h Person_B4 - Person_B1 12 :friend_b4b1;
+# Komponenta C - trojice
+h Person_C1 - Person_C2 20 :friend_c1c2;
+h Person_C2 - Person_C3 18 :friend_c2c3;
+h Person_C3 - Person_C1 19 :friend_c3c1;
+# Komponenta D - větší skupina
+h Person_D1 - Person_D2 25 :friend_d1d2;
+h Person_D1 - Person_D3 23 :friend_d1d3;
+h Person_D2 - Person_D4 22 :friend_d2d4;
+h Person_D3 - Person_D5 24 :friend_d3d5;
+h Person_D4 - Person_D5 21 :friend_d4d5;
+h Person_D2 - Person_D3 26 :friend_d2d3;
+# Person_E1 je izolovaný uzel bez hran
+

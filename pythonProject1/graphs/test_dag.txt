@@ -1,0 +1,16 @@
+# Acyklický orientovaný graf (DAG)
+# Příklad: závislosti úkolů
+u Start;
+u TaskA;
+u TaskB;
+u TaskC;
+u TaskD;
+u End;
+h Start > TaskA 1;
+h Start > TaskB 1;
+h TaskA > TaskC 2;
+h TaskB > TaskC 1;
+h TaskB > TaskD 3;
+h TaskC > End 2;
+h TaskD > End 1;
+

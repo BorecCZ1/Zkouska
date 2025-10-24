@@ -1,0 +1,137 @@
+# Graf 16: Turnajový graf - každý hraje s každým jednou
+# Orientovaný graf kde mezi každými dvěma uzly je právě jedna hrana
+u Team_A 1500;
+u Team_B 1450;
+u Team_C 1400;
+u Team_D 1550;
+u Team_E 1480;
+u Team_F 1420;
+u Team_G 1520;
+u Team_H 1490;
+u Team_I 1460;
+u Team_J 1510;
+u Team_K 1440;
+u Team_L 1470;
+u Team_M 1530;
+u Team_N 1410;
+u Team_O 1500;
+# Team A results
+h Team_A > Team_B 3 :a_beats_b;
+h Team_A > Team_C 2 :a_beats_c;
+h Team_D > Team_A 1 :d_beats_a;
+h Team_A > Team_E 4 :a_beats_e;
+h Team_F > Team_A 2 :f_beats_a;
+h Team_G > Team_A 3 :g_beats_a;
+h Team_A > Team_H 1 :a_beats_h;
+h Team_A > Team_I 2 :a_beats_i;
+h Team_J > Team_A 4 :j_beats_a;
+h Team_A > Team_K 3 :a_beats_k;
+h Team_A > Team_L 2 :a_beats_l;
+h Team_M > Team_A 1 :m_beats_a;
+h Team_A > Team_N 4 :a_beats_n;
+h Team_A > Team_O 2 :a_beats_o;
+# Team B results
+h Team_B > Team_C 3 :b_beats_c;
+h Team_D > Team_B 2 :d_beats_b;
+h Team_E > Team_B 1 :e_beats_b;
+h Team_B > Team_F 4 :b_beats_f;
+h Team_G > Team_B 2 :g_beats_b;
+h Team_B > Team_H 3 :b_beats_h;
+h Team_B > Team_I 1 :b_beats_i;
+h Team_J > Team_B 2 :j_beats_b;
+h Team_B > Team_K 4 :b_beats_k;
+h Team_L > Team_B 3 :l_beats_b;
+h Team_M > Team_B 2 :m_beats_b;
+h Team_B > Team_N 1 :b_beats_n;
+h Team_B > Team_O 3 :b_beats_o;
+# Team C results
+h Team_D > Team_C 3 :d_beats_c;
+h Team_C > Team_E 2 :c_beats_e;
+h Team_C > Team_F 1 :c_beats_f;
+h Team_G > Team_C 4 :g_beats_c;
+h Team_C > Team_H 2 :c_beats_h;
+h Team_I > Team_C 3 :i_beats_c;
+h Team_J > Team_C 1 :j_beats_c;
+h Team_C > Team_K 2 :c_beats_k;
+h Team_C > Team_L 4 :c_beats_l;
+h Team_M > Team_C 3 :m_beats_c;
+h Team_C > Team_N 2 :c_beats_n;
+h Team_O > Team_C 1 :o_beats_c;
+# Team D results
+h Team_D > Team_E 3 :d_beats_e;
+h Team_D > Team_F 2 :d_beats_f;
+h Team_D > Team_G 4 :d_beats_g;
+h Team_D > Team_H 1 :d_beats_h;
+h Team_D > Team_I 3 :d_beats_i;
+h Team_D > Team_J 2 :d_beats_j;
+h Team_D > Team_K 4 :d_beats_k;
+h Team_D > Team_L 1 :d_beats_l;
+h Team_D > Team_M 3 :d_beats_m;
+h Team_D > Team_N 2 :d_beats_n;
+h Team_D > Team_O 4 :d_beats_o;
+# Team E results
+h Team_E > Team_F 3 :e_beats_f;
+h Team_G > Team_E 2 :g_beats_e;
+h Team_E > Team_H 4 :e_beats_h;
+h Team_E > Team_I 1 :e_beats_i;
+h Team_J > Team_E 3 :j_beats_e;
+h Team_E > Team_K 2 :e_beats_k;
+h Team_E > Team_L 4 :e_beats_l;
+h Team_M > Team_E 1 :m_beats_e;
+h Team_E > Team_N 3 :e_beats_n;
+h Team_E > Team_O 2 :e_beats_o;
+# Team F results
+h Team_G > Team_F 3 :g_beats_f;
+h Team_F > Team_H 2 :f_beats_h;
+h Team_I > Team_F 1 :i_beats_f;
+h Team_J > Team_F 4 :j_beats_f;
+h Team_F > Team_K 3 :f_beats_k;
+h Team_L > Team_F 2 :l_beats_f;
+h Team_M > Team_F 1 :m_beats_f;
+h Team_F > Team_N 4 :f_beats_n;
+h Team_F > Team_O 3 :f_beats_o;
+# Team G results
+h Team_G > Team_H 3 :g_beats_h;
+h Team_G > Team_I 2 :g_beats_i;
+h Team_G > Team_J 4 :g_beats_j;
+h Team_G > Team_K 1 :g_beats_k;
+h Team_G > Team_L 3 :g_beats_l;
+h Team_G > Team_M 2 :g_beats_m;
+h Team_G > Team_N 4 :g_beats_n;
+h Team_G > Team_O 1 :g_beats_o;
+# Team H results
+h Team_H > Team_I 3 :h_beats_i;
+h Team_J > Team_H 2 :j_beats_h;
+h Team_H > Team_K 4 :h_beats_k;
+h Team_H > Team_L 1 :h_beats_l;
+h Team_M > Team_H 3 :m_beats_h;
+h Team_H > Team_N 2 :h_beats_n;
+h Team_H > Team_O 4 :h_beats_o;
+# Team I results
+h Team_J > Team_I 3 :j_beats_i;
+h Team_I > Team_K 2 :i_beats_k;
+h Team_I > Team_L 4 :i_beats_l;
+h Team_M > Team_I 1 :m_beats_i;
+h Team_I > Team_N 3 :i_beats_n;
+h Team_O > Team_I 2 :o_beats_i;
+# Team J results
+h Team_J > Team_K 3 :j_beats_k;
+h Team_J > Team_L 2 :j_beats_l;
+h Team_J > Team_M 4 :j_beats_m;
+h Team_J > Team_N 1 :j_beats_n;
+h Team_J > Team_O 3 :j_beats_o;
+# Team K results
+h Team_K > Team_L 3 :k_beats_l;
+h Team_M > Team_K 2 :m_beats_k;
+h Team_K > Team_N 4 :k_beats_n;
+h Team_K > Team_O 1 :k_beats_o;
+# Team L results
+h Team_M > Team_L 3 :m_beats_l;
+h Team_L > Team_N 2 :l_beats_n;
+h Team_L > Team_O 4 :l_beats_o;
+# Team M results
+h Team_M > Team_N 3 :m_beats_n;
+h Team_M > Team_O 2 :m_beats_o;
+# Team N results
+h Team_O > Team_N 3 :o_beats_n;
+

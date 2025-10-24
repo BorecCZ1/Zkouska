@@ -1,0 +1,28 @@
+# Graf 2: Petersonův graf - slavný neorientovaný graf
+# Není bipartitní, není planární, kubický (každý uzel má stupeň 3)
+u V1;
+u V2;
+u V3;
+u V4;
+u V5;
+u U1;
+u U2;
+u U3;
+u U4;
+u U5;
+h V1 - V2 1 :outer1;
+h V2 - V3 1 :outer2;
+h V3 - V4 1 :outer3;
+h V4 - V5 1 :outer4;
+h V5 - V1 1 :outer5;
+h V1 - U1 1 :spoke1;
+h V2 - U2 1 :spoke2;
+h V3 - U3 1 :spoke3;
+h V4 - U4 1 :spoke4;
+h V5 - U5 1 :spoke5;
+h U1 - U3 1 :star1;
+h U3 - U5 1 :star2;
+h U5 - U2 1 :star3;
+h U2 - U4 1 :star4;
+h U4 - U1 1 :star5;
+

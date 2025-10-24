@@ -1,0 +1,10 @@
+# Multigraf s násobnými hranami a smyčkami
+u A;
+u B;
+u C;
+h A > B :h1;
+h A > B :h2;
+h B > C :h3;
+h A > A :loop;
+h B - C :h4;
+

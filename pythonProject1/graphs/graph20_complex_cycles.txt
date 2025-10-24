@@ -1,0 +1,118 @@
+# Graf 20: Komplexní graf s mnoha cykly různých délek
+# Složitá struktura pro testování algoritmů detekce cyklů
+u Central 1000;
+u Ring1_A 100;
+u Ring1_B 101;
+u Ring1_C 102;
+u Ring1_D 103;
+u Ring1_E 104;
+u Ring1_F 105;
+u Ring2_A 200;
+u Ring2_B 201;
+u Ring2_C 202;
+u Ring2_D 203;
+u Ring2_E 204;
+u Cycle3_A 300;
+u Cycle3_B 301;
+u Cycle3_C 302;
+u Cycle4_A 400;
+u Cycle4_B 401;
+u Cycle4_C 402;
+u Cycle4_D 403;
+u Triangle1_A 500;
+u Triangle1_B 501;
+u Triangle1_C 502;
+u Triangle2_A 510;
+u Triangle2_B 511;
+u Triangle2_C 512;
+u Path1 600;
+u Path2 601;
+u Path3 602;
+u Path4 603;
+u Path5 604;
+u Bridge1 700;
+u Bridge2 701;
+# Centrální uzel ke všem ringům
+h Central > Ring1_A 10 :c_r1a;
+h Central > Ring2_A 10 :c_r2a;
+h Central > Cycle3_A 10 :c_c3a;
+h Central > Cycle4_A 10 :c_c4a;
+h Central > Triangle1_A 10 :c_t1a;
+h Central > Triangle2_A 10 :c_t2a;
+# Ring 1 - cyklus délky 6
+h Ring1_A > Ring1_B 5 :r1_ab;
+h Ring1_B > Ring1_C 5 :r1_bc;
+h Ring1_C > Ring1_D 5 :r1_cd;
+h Ring1_D > Ring1_E 5 :r1_de;
+h Ring1_E > Ring1_F 5 :r1_ef;
+h Ring1_F > Ring1_A 5 :r1_fa;
+# Vnitřní propojení Ring 1
+h Ring1_A > Ring1_C 3 :r1_ac;
+h Ring1_C > Ring1_E 3 :r1_ce;
+h Ring1_E > Ring1_A 3 :r1_ea;
+h Ring1_B > Ring1_D 3 :r1_bd;
+h Ring1_D > Ring1_F 3 :r1_df;
+h Ring1_F > Ring1_B 3 :r1_fb;
+# Ring 2 - cyklus délky 5
+h Ring2_A > Ring2_B 6 :r2_ab;
+h Ring2_B > Ring2_C 6 :r2_bc;
+h Ring2_C > Ring2_D 6 :r2_cd;
+h Ring2_D > Ring2_E 6 :r2_de;
+h Ring2_E > Ring2_A 6 :r2_ea;
+# Hvězdicové spojení v Ring 2
+h Ring2_A > Ring2_C 4 :r2_ac;
+h Ring2_A > Ring2_D 4 :r2_ad;
+h Ring2_B > Ring2_D 4 :r2_bd;
+h Ring2_B > Ring2_E 4 :r2_be;
+h Ring2_C > Ring2_E 4 :r2_ce;
+# Cycle3 - jednoduchý trojúhelník
+h Cycle3_A > Cycle3_B 7 :c3_ab;
+h Cycle3_B > Cycle3_C 7 :c3_bc;
+h Cycle3_C > Cycle3_A 7 :c3_ca;
+# Cycle4 - čtverec s diagonálami
+h Cycle4_A > Cycle4_B 8 :c4_ab;
+h Cycle4_B > Cycle4_C 8 :c4_bc;
+h Cycle4_C > Cycle4_D 8 :c4_cd;
+h Cycle4_D > Cycle4_A 8 :c4_da;
+h Cycle4_A > Cycle4_C 6 :c4_ac;
+h Cycle4_B > Cycle4_D 6 :c4_bd;
+# Triangle 1 a 2 - propojené trojúhelníky
+h Triangle1_A > Triangle1_B 9 :t1_ab;
+h Triangle1_B > Triangle1_C 9 :t1_bc;
+h Triangle1_C > Triangle1_A 9 :t1_ca;
+h Triangle2_A > Triangle2_B 9 :t2_ab;
+h Triangle2_B > Triangle2_C 9 :t2_bc;
+h Triangle2_C > Triangle2_A 9 :t2_ca;
+# Spojení mezi trojúhelníky
+h Triangle1_B > Triangle2_A 5 :t1b_t2a;
+h Triangle2_B > Triangle1_C 5 :t2b_t1c;
+# Cesta bez cyklu
+h Path1 > Path2 11 :p_12;
+h Path2 > Path3 11 :p_23;
+h Path3 > Path4 11 :p_34;
+h Path4 > Path5 11 :p_45;
+# Mosty spojující různé komponenty
+h Bridge1 - Ring1_C 12 :br1_r1c;
+h Bridge1 - Ring2_C 12 :br1_r2c;
+h Bridge2 - Cycle4_B 13 :br2_c4b;
+h Bridge2 - Triangle1_B 13 :br2_t1b;
+h Bridge1 - Bridge2 15 :br1_br2;
+# Zpětné hrany vytvářející další cykly
+h Ring1_D > Central 8 :r1d_c;
+h Ring2_E > Central 8 :r2e_c;
+h Cycle3_C > Path1 10 :c3c_p1;
+h Path3 > Triangle2_C 10 :p3_t2c;
+h Triangle1_C > Cycle4_D 10 :t1c_c4d;
+# Velmi dlouhý cyklus
+h Central > Path1 14 :c_p1;
+h Path5 > Ring1_A 14 :p5_r1a;
+h Ring1_F > Ring2_B 14 :r1f_r2b;
+h Ring2_D > Cycle3_A 14 :r2d_c3a;
+h Cycle3_B > Cycle4_C 14 :c3b_c4c;
+h Cycle4_A > Triangle1_A 14 :c4a_t1a;
+h Triangle2_C > Central 14 :t2c_c;
+# Smyčky
+h Central > Central 20 :central_loop;
+h Bridge1 > Bridge1 18 :bridge1_loop;
+h Bridge2 > Bridge2 18 :bridge2_loop;
+
