@@ -51,7 +51,7 @@ def analyze_matrix_properties(graph):
             print_matrix_section("MATICE INCIDENCE", lambda: get_incidence_matrix(graph))
         
         elif choice == "5":
-            print_matrix_section("MATICE DÉLEK", lambda: get_distance_matrix(graph))
+            print_distance_matrix_section(graph)
         
         elif choice == "6":
             print_matrix_section("MATICE PŘEDCHŮDCŮ", lambda: get_predecessor_matrix(graph))
@@ -98,6 +98,9 @@ def print_matrix_section(title: str, matrix_func):
         
         # Nabídnout počítání hodnot
         offer_value_count(matrix)
+        
+        # Nabídnout vyhledávání podle indexů
+        offer_index_search(matrix)
     
     except Exception as e:
         print(f"❌ Chyba při vytváření matice: {e}")
@@ -319,6 +322,157 @@ def count_value_in_matrix(matrix: List[List], search_value) -> int:
     return count
 
 
+def offer_index_search(matrix: List[List]):
+    """Nabídne vyhledávání podle indexů"""
+    if not matrix:
+        return
+    
+    print(f"\n📍 VYHLEDÁVÁNÍ PODLE INDEXŮ:")
+    print(f"   Rozměry matice: {len(matrix)}×{len(matrix[0]) if matrix else 0}")
+    
+    while True:
+        try:
+            index_input = input(f"\nChcete vyhledat hodnotu podle indexů? (ano/ne): ").strip().lower()
+            
+            if index_input in ['ne', 'n', 'konec', 'exit', 'q', '']:
+                break
+            elif index_input not in ['ano', 'a', 'yes', 'y']:
+                print("❌ Zadejte 'ano' nebo 'ne'")
+                continue
+            
+            # Zeptat se na indexy
+            try:
+                row_input = input(f"Zadejte číslo řádku (0-{len(matrix)-1}): ").strip()
+                col_input = input(f"Zadejte číslo sloupce (0-{len(matrix[0])-1}): ").strip()
+                
+                row = int(row_input)
+                col = int(col_input)
+                
+                # Zkontrolovat rozsah
+                if row < 0 or row >= len(matrix):
+                    print(f"❌ Řádek {row} je mimo rozsah (0-{len(matrix)-1})")
+                    continue
+                
+                if col < 0 or col >= len(matrix[0]):
+                    print(f"❌ Sloupec {col} je mimo rozsah (0-{len(matrix[0])-1})")
+                    continue
+                
+                # Získat hodnotu
+                value = matrix[row][col]
+                
+                print(f"\n📊 VÝSLEDEK:")
+                print(f"   Matice[{row}][{col}] = {value}")
+                
+                # Dodatečné informace
+                if value == float('inf'):
+                    print(f"   → Nekonečno (žádné spojení)")
+                elif value == 0:
+                    print(f"   → Nula (stejný uzel nebo žádné spojení)")
+                elif isinstance(value, float):
+                    print(f"   → Desetinné číslo")
+                else:
+                    print(f"   → Celé číslo")
+                
+            except ValueError:
+                print("❌ Zadejte platné číslo")
+                continue
+        
+        except KeyboardInterrupt:
+            break
+
+
+def print_distance_matrix_section(graph):
+    """Speciální zobrazení pro matici délek"""
+    print(f"\n{'='*80}")
+    print("MATICE DÉLEK")
+    print(f"{'='*80}")
+    
+    try:
+        matrix = get_distance_matrix(graph)
+        if matrix is None:
+            print("❌ Matice délek nelze vytvořit pro tento typ grafu")
+            return
+        
+        # Zkontrolovat velikost
+        if len(matrix) > 20 or (matrix and len(matrix[0]) > 20):
+            print(f"ℹ️  Matice je příliš velká na vypsání ({len(matrix)}×{len(matrix[0]) if matrix else 0})")
+            print(f"   (Zobrazují se pouze matice o velikosti max 20×20)")
+            print_matrix_info(matrix)
+        else:
+            print_matrix(matrix)
+            print_matrix_info(matrix)
+        
+        # Speciální vyhledávání pro matici délek
+        offer_distance_search(graph, matrix)
+    
+    except Exception as e:
+        print(f"❌ Chyba při vytváření matice délek: {e}")
+
+
+def offer_distance_search(graph, matrix: List[List[float]]):
+    """Speciální vyhledávání pro matici délek"""
+    if not matrix:
+        return
+    
+    print(f"\n🔍 VYHLEDÁVÁNÍ V MATICI DÉLEK:")
+    
+    while True:
+        try:
+            search_input = input(f"\nZadejte vzdálenost k vyhledání (nebo 'konec'): ").strip()
+            
+            if search_input.lower() in ['konec', 'exit', 'q', '']:
+                break
+            
+            # Zkusit převést na číslo
+            try:
+                search_value = float(search_input)
+            except ValueError:
+                print("❌ Zadejte platné číslo")
+                continue
+            
+            # Vyhledat hodnotu s tolerancí
+            results = find_distance_in_matrix(graph, matrix, search_value)
+            
+            if results:
+                print(f"\n✅ Nalezeno {len(results)} spojení se vzdáleností {search_value}:")
+                
+                # Omezit výpis pro velké matice
+                max_show = 20
+                for i, (from_node, to_node, distance) in enumerate(results[:max_show], 1):
+                    print(f"   {i:>2}. {from_node} → {to_node} (vzdálenost: {distance})")
+                
+                if len(results) > max_show:
+                    print(f"   ... a dalších {len(results) - max_show} spojení")
+                
+                # Statistiky
+                print(f"\n📊 STATISTIKY:")
+                print(f"   • Celkem spojení: {len(results)}")
+                print(f"   • Z uzlů: {len(set(r[0] for r in results))}")
+                print(f"   • Do uzlů: {len(set(r[1] for r in results))}")
+                
+            else:
+                print(f"❌ Vzdálenost {search_value} se v matici nevyskytuje")
+        
+        except KeyboardInterrupt:
+            break
+
+
+def find_distance_in_matrix(graph, matrix: List[List[float]], search_value: float) -> List[Tuple[str, str, float]]:
+    """Vyhledá všechny spojení se zadanou vzdáleností"""
+    nodes = sorted(graph.nodes.keys())
+    results = []
+    
+    for i, row in enumerate(matrix):
+        for j, val in enumerate(row):
+            # Porovnání s tolerancí pro float
+            if val != float('inf') and abs(val - search_value) < 1e-10:
+                from_node = nodes[i]
+                to_node = nodes[j]
+                results.append((from_node, to_node, val))
+    
+    return results
+
+
 def get_adjacency_matrix(graph) -> List[List[int]]:
     """Vytvoří matici sousednosti"""
     nodes = sorted(graph.nodes.keys())
@@ -471,6 +625,12 @@ def get_distance_matrix(graph) -> List[List[float]]:
             for j in range(n):
                 if dist[i][k] + dist[k][j] < dist[i][j]:
                     dist[i][j] = dist[i][k] + dist[k][j]
+    
+    # Zaokrouhlit všechny hodnoty na 2 desetinná místa
+    for i in range(n):
+        for j in range(n):
+            if dist[i][j] != float('inf'):
+                dist[i][j] = round(dist[i][j], 2)
     
     return dist
 
