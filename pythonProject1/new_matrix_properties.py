@@ -39,22 +39,22 @@ def analyze_matrix_properties(graph):
             break
         
         elif choice == "1":
-            print_matrix_section("MATICE SOUSEDNOSTI", lambda: get_adjacency_matrix(graph))
+            print_matrix_section("MATICE SOUSEDNOSTI", lambda: get_adjacency_matrix(graph), graph)
         
         elif choice == "2":
-            print_matrix_section("ZNAMÉNKOVÁ MATICE", lambda: get_signed_matrix(graph))
+            print_matrix_section("ZNAMÉNKOVÁ MATICE", lambda: get_signed_matrix(graph), graph)
         
         elif choice == "3":
             print_power_matrices(graph)
         
         elif choice == "4":
-            print_matrix_section("MATICE INCIDENCE", lambda: get_incidence_matrix(graph))
+            print_matrix_section("MATICE INCIDENCE", lambda: get_incidence_matrix(graph), graph)
         
         elif choice == "5":
             print_distance_matrix_section(graph)
         
         elif choice == "6":
-            print_matrix_section("MATICE PŘEDCHŮDCŮ", lambda: get_predecessor_matrix(graph))
+            print_matrix_section("MATICE PŘEDCHŮDCŮ", lambda: get_predecessor_matrix(graph), graph)
         
         elif choice == "7":
             print_edge_list_table(graph)
@@ -72,7 +72,7 @@ def analyze_matrix_properties(graph):
             print(f"❌ Neznámá volba '{choice}'")
 
 
-def print_matrix_section(title: str, matrix_func):
+def print_matrix_section(title: str, matrix_func, graph):
     """Vytiskne sekci s maticí"""
     print(f"\n{'='*80}")
     print(f"{title}")
@@ -101,6 +101,9 @@ def print_matrix_section(title: str, matrix_func):
         
         # Nabídnout vyhledávání podle indexů
         offer_index_search(matrix)
+        
+        # Nabídnout export do CSV
+        offer_csv_export(matrix, title, graph)
     
     except Exception as e:
         print(f"❌ Chyba při vytváření matice: {e}")
@@ -379,6 +382,107 @@ def offer_index_search(matrix: List[List]):
         
         except KeyboardInterrupt:
             break
+
+
+def offer_csv_export(matrix: List[List], title: str, graph):
+    """Nabídne export matice do CSV souboru"""
+    if not matrix:
+        return
+    
+    print(f"\n💾 EXPORT DO CSV:")
+    
+    while True:
+        try:
+            export_input = input(f"\nChcete exportovat matici do CSV? (ano/ne): ").strip().lower()
+            
+            if export_input in ['ne', 'n', 'konec', 'exit', 'q', '']:
+                break
+            elif export_input not in ['ano', 'a', 'yes', 'y']:
+                print("❌ Zadejte 'ano' nebo 'ne'")
+                continue
+            
+            # Vytvořit název souboru
+            filename = create_csv_filename(title)
+            
+            # Exportovat matici
+            success = export_matrix_to_csv(matrix, filename, title, graph)
+            
+            if success:
+                print(f"✅ Matice úspěšně exportována do: {filename}")
+            else:
+                print(f"❌ Chyba při exportu do: {filename}")
+        
+        except KeyboardInterrupt:
+            break
+
+
+def create_csv_filename(title: str) -> str:
+    """Vytvoří název CSV souboru z názvu matice"""
+    import os
+    import re
+    from datetime import datetime
+    
+    # Vytvořit output adresář pokud neexistuje
+    output_dir = "output"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"📁 Vytvořen adresář: {output_dir}")
+    
+    # Odstranit speciální znaky a převést na lowercase
+    clean_title = re.sub(r'[^\w\s-]', '', title.lower())
+    clean_title = re.sub(r'[-\s]+', '_', clean_title)
+    
+    # Přidat timestamp pro jedinečnost
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # Cesta do output adresáře
+    filename = f"{clean_title}_{timestamp}.csv"
+    return os.path.join(output_dir, filename)
+
+
+def export_matrix_to_csv(matrix: List[List], filename: str, title: str, graph) -> bool:
+    """Exportuje matici do CSV souboru s hlavičkami"""
+    try:
+        import csv
+        from datetime import datetime
+        
+        with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';')
+            
+            # Metadata jako komentáře
+            writer.writerow([f"# {title}"])
+            writer.writerow([f"# Exportováno: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"])
+            writer.writerow([f"# Rozměry: {len(matrix)}×{len(matrix[0]) if matrix else 0}"])
+            writer.writerow([])  # Prázdný řádek
+            
+            # Získat názvy uzlů
+            nodes = sorted(graph.nodes.keys())
+            
+            # Vytvořit hlavičky pro sloupce (uzly)
+            header_row = [''] + nodes
+            writer.writerow(header_row)
+            
+            # Data matice s hlavičkami řádků
+            for i, row in enumerate(matrix):
+                # Převést nekonečno na čitelný formát
+                formatted_row = []
+                for val in row:
+                    if val == float('inf'):
+                        formatted_row.append('∞')
+                    elif val == float('-inf'):
+                        formatted_row.append('-∞')
+                    else:
+                        formatted_row.append(str(val))
+                
+                # Přidat hlavičku řádku (název uzlu)
+                row_with_header = [nodes[i]] + formatted_row
+                writer.writerow(row_with_header)
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Chyba při exportu: {e}")
+        return False
 
 
 def print_distance_matrix_section(graph):
