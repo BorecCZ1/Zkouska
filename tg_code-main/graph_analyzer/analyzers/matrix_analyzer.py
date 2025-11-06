@@ -264,7 +264,156 @@ class MatrixAnalyzer:
         except Exception:
             return str(val)
 
-    def _print_matrix(self, matrix, nodes, col_labels=None):
+    def _analyze_diagonal(self, matrix, show_values=False):
+        """Analyzuje hlavní diagonálu matice.
+        
+        Args:
+            matrix: 2D seznam
+            show_values: Pokud True, vrátí i seznam všech hodnot na diagonále
+            
+        Returns:
+            dict: Slovník s informacemi o diagonále
+        """
+        if not matrix:
+            return None
+        
+        n = min(len(matrix), len(matrix[0]) if matrix else 0)
+        if n == 0:
+            return None
+        
+        diagonal_values = [matrix[i][i] for i in range(n)]
+        zero_count = sum(1 for v in diagonal_values if v == 0)
+        nonzero_count = sum(1 for v in diagonal_values if v != 0 and v != float('inf'))
+        inf_count = sum(1 for v in diagonal_values if v == float('inf'))
+        
+        # Seskupení nenulových hodnot pro přehlednější výpis
+        nonzero_values = []
+        value_counts = {}
+        for v in diagonal_values:
+            if v != 0 and v != float('inf'):
+                nonzero_values.append(v)
+                value_counts[v] = value_counts.get(v, 0) + 1
+        
+        result = {
+            'zero_count': zero_count,
+            'nonzero_count': nonzero_count,
+            'inf_count': inf_count,
+            'total': n,
+            'diagonal_values': diagonal_values,
+            'nonzero_values': nonzero_values,
+            'value_counts': value_counts
+        }
+        
+        return result
+
+    def _analyze_anti_diagonal(self, matrix, show_values=False):
+        """Analyzuje vedlejší diagonálu matice.
+        
+        Args:
+            matrix: 2D seznam
+            show_values: Pokud True, vrátí i seznam všech hodnot na diagonále
+            
+        Returns:
+            dict: Slovník s informacemi o vedlejší diagonále
+        """
+        if not matrix:
+            return None
+        
+        rows = len(matrix)
+        cols = len(matrix[0]) if rows else 0
+        n = min(rows, cols)
+        
+        if n == 0:
+            return None
+        
+        # Vedlejší diagonála: prvky matrix[i][cols-1-i]
+        diagonal_values = [matrix[i][cols-1-i] for i in range(n)]
+        zero_count = sum(1 for v in diagonal_values if v == 0)
+        nonzero_count = sum(1 for v in diagonal_values if v != 0 and v != float('inf'))
+        inf_count = sum(1 for v in diagonal_values if v == float('inf'))
+        
+        # Seskupení nenulových hodnot pro přehlednější výpis
+        nonzero_values = []
+        value_counts = {}
+        for v in diagonal_values:
+            if v != 0 and v != float('inf'):
+                nonzero_values.append(v)
+                value_counts[v] = value_counts.get(v, 0) + 1
+        
+        result = {
+            'zero_count': zero_count,
+            'nonzero_count': nonzero_count,
+            'inf_count': inf_count,
+            'total': n,
+            'diagonal_values': diagonal_values,
+            'nonzero_values': nonzero_values,
+            'value_counts': value_counts,
+            'cols': cols  # Potřebujeme pro výpis pozic
+        }
+        
+        return result
+
+    def _print_diagonal_info(self, matrix):
+        """Vypíše informace o hlavní diagonále matice."""
+        diag_info = self._analyze_diagonal(matrix)
+        if not diag_info:
+            return
+        
+        print()
+        print("─" * 40)
+        print("INFORMACE O HLAVNÍ DIAGONÁLE:")
+        print(f"  Celkem prvků:       {diag_info['total']}")
+        print(f"  Nulové hodnoty:     {diag_info['zero_count']}")
+        print(f"  Nenulové hodnoty:   {diag_info['nonzero_count']}")
+        
+        if diag_info['inf_count'] > 0:
+            print(f"  Nekonečno (∞):      {diag_info['inf_count']}")
+        
+        # Zobrazit nenulové hodnoty, pokud jich není příliš mnoho
+        if diag_info['nonzero_count'] > 0:
+            if diag_info['nonzero_count'] <= 20:
+                print(f"  Nenulové hodnoty:   ", end="")
+                formatted_values = [self._format_cell(v) for v in diag_info['nonzero_values']]
+                print(", ".join(formatted_values))
+            else:
+                # Zobrazit pouze unikátní hodnoty a jejich počet
+                print(f"  Unikátní nenulové hodnoty:")
+                for val, count in sorted(diag_info['value_counts'].items()):
+                    print(f"    {self._format_cell(val)}: {count}×")
+        
+        print("─" * 40)
+
+    def _print_anti_diagonal_info(self, matrix):
+        """Vypíše informace o vedlejší diagonále matice."""
+        diag_info = self._analyze_anti_diagonal(matrix)
+        if not diag_info:
+            return
+        
+        print()
+        print("─" * 40)
+        print("INFORMACE O VEDLEJŠÍ DIAGONÁLE:")
+        print(f"  Celkem prvků:       {diag_info['total']}")
+        print(f"  Nulové hodnoty:     {diag_info['zero_count']}")
+        print(f"  Nenulové hodnoty:   {diag_info['nonzero_count']}")
+        
+        if diag_info['inf_count'] > 0:
+            print(f"  Nekonečno (∞):      {diag_info['inf_count']}")
+        
+        # Zobrazit nenulové hodnoty, pokud jich není příliš mnoho
+        if diag_info['nonzero_count'] > 0:
+            if diag_info['nonzero_count'] <= 20:
+                print(f"  Nenulové hodnoty:   ", end="")
+                formatted_values = [self._format_cell(v) for v in diag_info['nonzero_values']]
+                print(", ".join(formatted_values))
+            else:
+                # Zobrazit pouze unikátní hodnoty a jejich počet
+                print(f"  Unikátní nenulové hodnoty:")
+                for val, count in sorted(diag_info['value_counts'].items()):
+                    print(f"    {self._format_cell(val)}: {count}×")
+        
+        print("─" * 40)
+
+    def _print_matrix(self, matrix, nodes, col_labels=None, show_diagonal_info=False):
         # Pretty-print a 2D matrix with column widths computed from content
         if not matrix:
             print('Prázdná matice')
@@ -298,6 +447,10 @@ class MatrixAnalyzer:
             for j in range(cols):
                 print(f"{table[i][j]:>{col_widths[j]+1}}", end='')
             print()
+        
+        # Zobrazit informace o diagonále pouze pro čtvercové matice (pokud je to požadováno)
+        if show_diagonal_info and rows == cols:
+            self._print_diagonal_info(matrix)
 
     
     """
@@ -594,6 +747,11 @@ class MatrixAnalyzer:
             print("13. Najít minimum")
             print("14. Najít nenulové hodnoty")
             print("15. Zobrazit hodnotu na pozici [řádek, sloupec]")
+            print("16. Informace o hlavní diagonále")
+            print("17. Informace o vedlejší diagonále")
+            print("18. Počet sledů délky k mezi dvěma uzly")
+            print("19. Hledat hodnotu na hlavní diagonále")
+            print("20. Hledat hodnotu na vedlejší diagonále")
             print("0. Zpět")
             print("="*60)
 
@@ -769,6 +927,263 @@ class MatrixAnalyzer:
                                     print(f"   ℹ️  Existuje {int(val) if isinstance(val, (int, float)) and val == int(val) else val} hrana(n)")
                         else:
                             print("❌ Neplatná pozice nebo uzel neexistuje")
+                    except Exception as e:
+                        print(f"❌ Chyba: {e}")
+                
+                elif choice == '16':
+                    # Zobrazit informace o hlavní diagonále
+                    rows = len(matrix)
+                    cols = len(matrix[0]) if rows else 0
+                    
+                    if rows != cols:
+                        print("\n⚠️  Matice není čtvercová - nemá hlavní diagonálu")
+                    else:
+                        diag_info = self._analyze_diagonal(matrix)
+                        if diag_info:
+                            print()
+                            print("─" * 60)
+                            print("INFORMACE O HLAVNÍ DIAGONÁLE")
+                            print("─" * 60)
+                            print(f"Celkem prvků na diagonále:  {diag_info['total']}")
+                            print(f"Nulové hodnoty:              {diag_info['zero_count']}")
+                            print(f"Nenulové hodnoty:            {diag_info['nonzero_count']}")
+                            
+                            if diag_info['inf_count'] > 0:
+                                print(f"Nekonečno (∞):               {diag_info['inf_count']}")
+                            
+                            # Zobrazit všechny hodnoty na diagonále
+                            if diag_info['total'] > 0:
+                                print(f"\nVšechny hodnoty na hlavní diagonále:")
+                                for i, val in enumerate(diag_info['diagonal_values']):
+                                    node_label = nodes[i] if i < len(nodes) else i
+                                    print(f"  [{i}] {node_label}: {self._format_cell(val)}")
+                            
+                            # Zobrazit statistiku nenulových hodnot
+                            if diag_info['nonzero_count'] > 0:
+                                print(f"\nNenulové hodnoty - statistika:")
+                                for val, count in sorted(diag_info['value_counts'].items()):
+                                    print(f"  {self._format_cell(val)}: {count}× (vyskytuje se {count}krát)")
+                            
+                            print("─" * 60)
+                        else:
+                            print("\n❌ Nelze analyzovat hlavní diagonálu")
+                
+                elif choice == '17':
+                    # Zobrazit informace o vedlejší diagonále
+                    rows = len(matrix)
+                    cols = len(matrix[0]) if rows else 0
+                    
+                    if rows != cols:
+                        print("\n⚠️  Matice není čtvercová - nemá vedlejší diagonálu")
+                    else:
+                        diag_info = self._analyze_anti_diagonal(matrix)
+                        if diag_info:
+                            print()
+                            print("─" * 60)
+                            print("INFORMACE O VEDLEJŠÍ DIAGONÁLE")
+                            print("─" * 60)
+                            print(f"Celkem prvků na diagonále:  {diag_info['total']}")
+                            print(f"Nulové hodnoty:              {diag_info['zero_count']}")
+                            print(f"Nenulové hodnoty:            {diag_info['nonzero_count']}")
+                            
+                            if diag_info['inf_count'] > 0:
+                                print(f"Nekonečno (∞):               {diag_info['inf_count']}")
+                            
+                            # Zobrazit všechny hodnoty na vedlejší diagonále
+                            if diag_info['total'] > 0:
+                                print(f"\nVšechny hodnoty na vedlejší diagonále:")
+                                for i, val in enumerate(diag_info['diagonal_values']):
+                                    # Pro vedlejší diagonálu: row=i, col=cols-1-i
+                                    row_label = nodes[i] if i < len(nodes) else i
+                                    col_idx = diag_info['cols'] - 1 - i
+                                    col_label = nodes[col_idx] if col_idx < len(nodes) else col_idx
+                                    print(f"  [{i},{col_idx}] ({row_label} → {col_label}): {self._format_cell(val)}")
+                            
+                            # Zobrazit statistiku nenulových hodnot
+                            if diag_info['nonzero_count'] > 0:
+                                print(f"\nNenulové hodnoty - statistika:")
+                                for val, count in sorted(diag_info['value_counts'].items()):
+                                    print(f"  {self._format_cell(val)}: {count}× (vyskytuje se {count}krát)")
+                            
+                            print("─" * 60)
+                        else:
+                            print("\n❌ Nelze analyzovat vedlejší diagonálu")
+                
+                elif choice == '18':
+                    # Počet sledů délky k mezi dvěma uzly
+                    print("\n💡 Tato funkce vypočítá počet sledů délky k mezi dvěma uzly")
+                    print("   (Sled = cesta, která může procházet stejnými uzly/hranami opakovaně)")
+                    print()
+                    print(f"Dostupné uzly: {', '.join(str(n) for n in nodes)}")
+                    
+                    try:
+                        start_node = input("Zadejte počáteční uzel: ").strip()
+                        end_node = input("Zadejte koncový uzel: ").strip()
+                        k_str = input("Zadejte délku sledů (k): ").strip()
+                        
+                        # Validace vstupu
+                        if start_node not in nodes:
+                            print(f"❌ Uzel '{start_node}' neexistuje v grafu")
+                            continue
+                        
+                        if end_node not in nodes:
+                            print(f"❌ Uzel '{end_node}' neexistuje v grafu")
+                            continue
+                        
+                        k = int(k_str)
+                        if k < 1:
+                            print("❌ Délka k musí být alespoň 1")
+                            continue
+                        
+                        # Spočítat A^k
+                        print(f"\n⏳ Počítám matici sousednosti na {k}. mocninu...")
+                        A_k, nodes_list = self.get_adjacency_power(k)
+                        
+                        if not A_k:
+                            print("❌ Nepodařilo se vypočítat matici")
+                            continue
+                        
+                        # Najít indexy uzlů
+                        start_idx = nodes_list.index(start_node)
+                        end_idx = nodes_list.index(end_node)
+                        
+                        # Získat počet sledů
+                        count = A_k[start_idx][end_idx]
+                        
+                        # Zobrazit výsledek
+                        print()
+                        print("─" * 60)
+                        print("VÝSLEDEK")
+                        print("─" * 60)
+                        print(f"Počáteční uzel:     {start_node}")
+                        print(f"Koncový uzel:       {end_node}")
+                        print(f"Délka sledů:        {k}")
+                        print(f"Počet sledů:        {count}")
+                        print("─" * 60)
+                        
+                        if count == 0:
+                            print(f"\nℹ️  Neexistuje žádný sled délky {k} z uzlu {start_node} do uzlu {end_node}")
+                        elif count == 1:
+                            print(f"\n✅ Existuje přesně 1 sled délky {k} z uzlu {start_node} do uzlu {end_node}")
+                        else:
+                            print(f"\n✅ Existuje {count} různých sledů délky {k} z uzlu {start_node} do uzlu {end_node}")
+                        
+                        # Nabídnout zobrazení celé matice A^k
+                        show_matrix = input(f"\nChcete zobrazit celou matici A^{k}? (a/n): ").strip().lower()
+                        if show_matrix == 'a':
+                            print(f"\nMatice sousednosti na {k}. mocninu:")
+                            self._print_matrix(A_k, nodes_list, col_labels=nodes_list)
+                        
+                    except ValueError as e:
+                        print(f"❌ Neplatný vstup: {e}")
+                    except Exception as e:
+                        print(f"❌ Chyba: {e}")
+                
+                elif choice == '19':
+                    # Hledat hodnotu na hlavní diagonále
+                    rows = len(matrix)
+                    cols = len(matrix[0]) if rows else 0
+                    
+                    if rows != cols:
+                        print("\n⚠️  Matice není čtvercová - nemá hlavní diagonálu")
+                        continue
+                    
+                    try:
+                        val_str = input("\nZadejte hodnotu k vyhledání na hlavní diagonále: ").strip()
+                        
+                        # Parsovat hodnotu
+                        if val_str.lower() in ['inf', '∞', 'infinity']:
+                            search_val = float('inf')
+                        else:
+                            search_val = float(val_str) if '.' in val_str else int(val_str)
+                        
+                        # Najít všechny výskyty na hlavní diagonále
+                        diag_info = self._analyze_diagonal(matrix)
+                        if not diag_info:
+                            print("❌ Nelze analyzovat diagonálu")
+                            continue
+                        
+                        matches = []
+                        for i, val in enumerate(diag_info['diagonal_values']):
+                            if val == search_val:
+                                node_label = nodes[i] if i < len(nodes) else i
+                                matches.append((i, node_label, val))
+                        
+                        # Zobrazit výsledky
+                        print()
+                        print("─" * 60)
+                        print("HLEDÁNÍ NA HLAVNÍ DIAGONÁLE")
+                        print("─" * 60)
+                        print(f"Hledaná hodnota:    {self._format_cell(search_val)}")
+                        print(f"Počet výskytů:      {len(matches)}")
+                        print("─" * 60)
+                        
+                        if matches:
+                            print(f"\n✅ Hodnota {self._format_cell(search_val)} nalezena na pozicích:")
+                            for i, node_label, val in matches:
+                                print(f"  [{i},{i}] uzel {node_label}: {self._format_cell(val)}")
+                        else:
+                            print(f"\n❌ Hodnota {self._format_cell(search_val)} nebyla na hlavní diagonále nalezena")
+                        
+                        print()
+                        
+                    except ValueError:
+                        print("❌ Neplatná hodnota")
+                    except Exception as e:
+                        print(f"❌ Chyba: {e}")
+                
+                elif choice == '20':
+                    # Hledat hodnotu na vedlejší diagonále
+                    rows = len(matrix)
+                    cols = len(matrix[0]) if rows else 0
+                    
+                    if rows != cols:
+                        print("\n⚠️  Matice není čtvercová - nemá vedlejší diagonálu")
+                        continue
+                    
+                    try:
+                        val_str = input("\nZadejte hodnotu k vyhledání na vedlejší diagonále: ").strip()
+                        
+                        # Parsovat hodnotu
+                        if val_str.lower() in ['inf', '∞', 'infinity']:
+                            search_val = float('inf')
+                        else:
+                            search_val = float(val_str) if '.' in val_str else int(val_str)
+                        
+                        # Najít všechny výskyty na vedlejší diagonále
+                        diag_info = self._analyze_anti_diagonal(matrix)
+                        if not diag_info:
+                            print("❌ Nelze analyzovat vedlejší diagonálu")
+                            continue
+                        
+                        matches = []
+                        for i, val in enumerate(diag_info['diagonal_values']):
+                            if val == search_val:
+                                row_label = nodes[i] if i < len(nodes) else i
+                                col_idx = diag_info['cols'] - 1 - i
+                                col_label = nodes[col_idx] if col_idx < len(nodes) else col_idx
+                                matches.append((i, col_idx, row_label, col_label, val))
+                        
+                        # Zobrazit výsledky
+                        print()
+                        print("─" * 60)
+                        print("HLEDÁNÍ NA VEDLEJŠÍ DIAGONÁLE")
+                        print("─" * 60)
+                        print(f"Hledaná hodnota:    {self._format_cell(search_val)}")
+                        print(f"Počet výskytů:      {len(matches)}")
+                        print("─" * 60)
+                        
+                        if matches:
+                            print(f"\n✅ Hodnota {self._format_cell(search_val)} nalezena na pozicích:")
+                            for row_i, col_i, row_label, col_label, val in matches:
+                                print(f"  [{row_i},{col_i}] ({row_label} → {col_label}): {self._format_cell(val)}")
+                        else:
+                            print(f"\n❌ Hodnota {self._format_cell(search_val)} nebyla na vedlejší diagonále nalezena")
+                        
+                        print()
+                        
+                    except ValueError:
+                        print("❌ Neplatná hodnota")
                     except Exception as e:
                         print(f"❌ Chyba: {e}")
                 

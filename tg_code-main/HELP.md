@@ -86,7 +86,7 @@ Basic
     --matrices         Vytiskne maticové reprezentace
     --adjacency        Jen matice sousednosti
     --incidence        Jen matice incidence
-    --weight           Jen matice vah
+    --weight           Jen matice vah (délek)
     --adj-power K      Vypočte A^K (počet cest délky K)
     --matrix-ops       Interaktivní operace s maticemi
     --neighbors NODE   Sousedé zadaného uzlu
